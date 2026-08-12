@@ -35,118 +35,130 @@ class JaaduHome extends StatefulWidget {
 }
 
 class _JaaduHomeState extends State<JaaduHome> {
-  final SpeechToText _speech = SpeechToText();
+  final SpeechToText speech = SpeechToText();
 
-  bool _isListening = false;
-  bool _speechReady = false;
+  bool isListening = false;
+  bool speechAvailable = false;
 
-  String _heardText = 'मैं आपकी बात सुनने के लिए तैयार हूँ।';
+  String heardText = 'नमस्ते! मैं जादू हूँ।';
 
   @override
   void initState() {
     super.initState();
-    _initializeSpeech();
+    initializeSpeech();
   }
 
-  Future<void> _initializeSpeech() async {
-    final available = await _speech.initialize(
+  Future<void> initializeSpeech() async {
+    final available = await speech.initialize(
       onError: (error) {
+        if (!mounted) return;
         setState(() {
-          _heardText = 'आवाज़ पहचानने में समस्या हुई।';
+          heardText = 'Speech recognition में समस्या हुई।';
+          isListening = false;
         });
       },
     );
 
+    if (!mounted) return;
+
     setState(() {
-      _speechReady = available;
+      speechAvailable = available;
     });
   }
 
-  Future<void> _startListening() async {
-    if (!_speechReady) {
-      await _initializeSpeech();
+  Future<void> startListening() async {
+    if (!speechAvailable) {
+      await initializeSpeech();
     }
 
-    if (!_speechReady) {
+    if (!speechAvailable) {
       setState(() {
-        _heardText = 'Speech recognition उपलब्ध नहीं है।';
+        heardText = 'इस फोन में Speech Recognition उपलब्ध नहीं है।';
       });
       return;
     }
 
     setState(() {
-      _isListening = true;
-      _heardText = 'मैं सुन रहा हूँ...';
+      isListening = true;
+      heardText = 'मैं सुन रहा हूँ...';
     });
 
-    await _speech.listen(
+    await speech.listen(
       localeId: 'hi_IN',
+      listenFor: const Duration(seconds: 10),
+      pauseFor: const Duration(seconds: 3),
       onResult: (result) {
+        if (!mounted) return;
+
         setState(() {
-          _heardText = result.recognizedWords;
+          heardText = result.recognizedWords;
         });
 
         if (result.finalResult) {
-          _handleCommand(result.recognizedWords);
+          handleCommand(result.recognizedWords);
         }
       },
     );
   }
 
-  Future<void> _stopListening() async {
-    await _speech.stop();
+  Future<void> stopListening() async {
+    await speech.stop();
+
+    if (!mounted) return;
 
     setState(() {
-      _isListening = false;
+      isListening = false;
     });
   }
 
-  Future<void> _handleCommand(String command) async {
+  Future<void> handleCommand(String command) async {
     final text = command.toLowerCase().trim();
 
-    if (text.contains('youtube') ||
-        text.contains('यूट्यूब')) {
-      await _openUrl('https://www.youtube.com');
+    if (text.contains('youtube') || text.contains('यूट्यूब')) {
+      await openAppOrWebsite('https://www.youtube.com');
       return;
     }
 
     if (text.contains('instagram') ||
         text.contains('इंस्टाग्राम') ||
         text.contains('रील')) {
-      await _openUrl('https://www.instagram.com');
+      await openAppOrWebsite('https://www.instagram.com');
       return;
     }
 
     if (text.contains('गाना') ||
-        text.contains('music') ||
-        text.contains('म्यूजिक')) {
-      await _openUrl('https://music.youtube.com');
+        text.contains('म्यूजिक') ||
+        text.contains('music')) {
+      await openAppOrWebsite('https://music.youtube.com');
       return;
     }
 
+    if (!mounted) return;
+
     setState(() {
-      _heardText = 'मैंने सुना: $command\n\nयह command अभी नहीं जोड़ी गई है।';
+      heardText =
+          'मैंने सुना:\n"$command"\n\nइस command को अभी सिखाया नहीं गया है।';
     });
   }
 
-  Future<void> _openUrl(String url) async {
+  Future<void> openAppOrWebsite(String url) async {
     final uri = Uri.parse(url);
 
-    final success = await launchUrl(
+    final opened = await launchUrl(
       uri,
       mode: LaunchMode.externalApplication,
     );
 
-    if (!success) {
+    if (!opened && mounted) {
       setState(() {
-        _heardText = 'यह ऐप/लिंक नहीं खुल पाया।';
+        heardText = 'यह app या website नहीं खुल पाई।';
       });
     }
   }
 
   @override
   void dispose() {
-    _speech.stop();
+    speech.stop();
     super.dispose();
   }
 
@@ -157,8 +169,8 @@ class _JaaduHomeState extends State<JaaduHome> {
         title: const Text(
           'जादू',
           style: TextStyle(
-            fontSize: 24,
             fontWeight: FontWeight.bold,
+            fontSize: 24,
           ),
         ),
         centerTitle: true,
@@ -166,7 +178,7 @@ class _JaaduHomeState extends State<JaaduHome> {
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 50),
+            const SizedBox(height: 55),
 
             const Icon(
               Icons.auto_awesome,
@@ -189,7 +201,7 @@ class _JaaduHomeState extends State<JaaduHome> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30),
               child: Text(
-                _heardText,
+                heardText,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 18,
@@ -201,30 +213,26 @@ class _JaaduHomeState extends State<JaaduHome> {
             const Spacer(),
 
             GestureDetector(
-              onTap: _isListening
-                  ? _stopListening
-                  : _startListening,
+              onTap: isListening ? stopListening : startListening,
               child: Container(
-                width: 100,
-                height: 100,
+                width: 105,
+                height: 105,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: _isListening
+                  color: isListening
                       ? Colors.red
                       : Colors.deepPurple,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.deepPurple.withOpacity(0.4),
+                      color: Colors.deepPurple.withOpacity(0.35),
                       blurRadius: 25,
                       spreadRadius: 5,
                     ),
                   ],
                 ),
                 child: Icon(
-                  _isListening
-                      ? Icons.stop
-                      : Icons.mic,
-                  size: 45,
+                  isListening ? Icons.stop : Icons.mic,
+                  size: 48,
                   color: Colors.white,
                 ),
               ),
@@ -233,16 +241,16 @@ class _JaaduHomeState extends State<JaaduHome> {
             const SizedBox(height: 25),
 
             Text(
-              _isListening
+              isListening
                   ? 'बोलिए...'
-                  : 'बोलने के लिए माइक दबाएँ',
+                  : 'माइक दबाकर बोलें',
               style: const TextStyle(
                 fontSize: 16,
                 color: Colors.white60,
               ),
             ),
 
-            const SizedBox(height: 50),
+            const SizedBox(height: 55),
           ],
         ),
       ),
