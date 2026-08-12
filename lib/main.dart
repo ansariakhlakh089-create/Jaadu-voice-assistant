@@ -258,7 +258,60 @@ class _JaaduHomeState extends State<JaaduHome> {
       await callNative('openLocation');
       return;
     }
+     // Volume बढ़ाओ
+if (containsAny(text, [
+  'volume बढ़ाओ',
+  'वॉल्यूम बढ़ाओ',
+  'आवाज बढ़ाओ',
+  'आवाज़ बढ़ाओ',
+  'sound बढ़ाओ',
+  'आवाज तेज करो',
+  'आवाज़ तेज करो',
+])) {
+  await callNative('volumeUp');
+  return;
+}
 
+// Volume कम करो
+if (containsAny(text, [
+  'volume कम करो',
+  'वॉल्यूम कम करो',
+  'आवाज कम करो',
+  'आवाज़ कम करो',
+  'sound कम करो',
+  'आवाज धीमी करो',
+  'आवाज़ धीमी करो',
+])) {
+  await callNative('volumeDown');
+  return;
+}
+
+// Volume mute
+if (containsAny(text, [
+  'volume mute करो',
+  'वॉल्यूम म्यूट करो',
+  'आवाज बंद करो',
+  'आवाज़ बंद करो',
+  'sound बंद करो',
+  'म्यूट करो',
+])) {
+  await callNative('volumeMute');
+  return;
+}
+
+// Volume full
+if (containsAny(text, [
+  'volume full करो',
+  'वॉल्यूम फुल करो',
+  'आवाज full करो',
+  'आवाज़ फुल करो',
+  'volume maximum करो',
+  'वॉल्यूम maximum करो',
+])) {
+  await callNative('volumeMax');
+  return;
+}
+    
     if (!mounted) return;
 
     setState(() {
