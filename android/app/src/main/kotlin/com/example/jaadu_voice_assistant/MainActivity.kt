@@ -107,6 +107,23 @@ class MainActivity : FlutterActivity() {
                     }
                 }
 
+                "openUrl" -> {
+    try {
+        val url = call.argument<String>("url")
+
+        if (url == null) {
+            result.error("URL_ERROR", "URL नहीं मिली", null)
+            return@setMethodCallHandler
+        }
+
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        startActivity(intent)
+
+        result.success(true)
+    } catch (e: Exception) {
+        result.error("URL_ERROR", e.message, null)
+    }
+                }
                 else -> {
                     result.notImplemented()
                 }
