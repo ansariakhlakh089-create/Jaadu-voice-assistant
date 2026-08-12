@@ -358,7 +358,33 @@ if (containsAny(text, [
 ])) {
   await callNative('musicPrevious');
   return;
-}   
+} 
+// Torch ON
+if (containsAny(text, [
+  'टॉर्च चालू करो',
+  'टॉर्च ऑन करो',
+  'torch चालू करो',
+  'torch on करो',
+  'flashlight चालू करो',
+  'फ्लैशलाइट चालू करो',
+])) {
+  await callNative('torchOn');
+  return;
+}
+
+// Torch OFF
+if (containsAny(text, [
+  'टॉर्च बंद करो',
+  'टॉर्च ऑफ करो',
+  'torch बंद करो',
+  'torch off करो',
+  'flashlight बंद करो',
+  'फ्लैशलाइट बंद करो',
+])) {
+  await callNative('torchOff');
+  return;
+}
+    
     if (!mounted) return;
 
     setState(() {
