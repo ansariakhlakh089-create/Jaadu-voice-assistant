@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 import android.provider.MediaStore
+import android.media.AudioManager
 import android.provider.Settings.ACTION_WIFI_SETTINGS
 import android.provider.Settings.ACTION_BLUETOOTH_SETTINGS
 import android.provider.Settings.ACTION_SETTINGS
@@ -28,7 +29,8 @@ class MainActivity : FlutterActivity() {
 
                 "openCamera" -> {
                     try {
-                        val intent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
+                        val intent =
+                            Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
                         startActivity(intent)
                         result.success(true)
                     } catch (e: Exception) {
@@ -96,9 +98,8 @@ class MainActivity : FlutterActivity() {
 
                 "openAppSettings" -> {
                     try {
-                        val intent = Intent(
-                            Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                        )
+                        val intent =
+                            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                         intent.data = Uri.parse("package:$packageName")
                         startActivity(intent)
                         result.success(true)
@@ -108,22 +109,125 @@ class MainActivity : FlutterActivity() {
                 }
 
                 "openUrl" -> {
-    try {
-        val url = call.argument<String>("url")
+                    try {
+                        val url = call.argument<String>("url")
 
-        if (url == null) {
-            result.error("URL_ERROR", "URL नहीं मिली", null)
-            return@setMethodCallHandler
-        }
+                        if (url == null) {
+                            result.error(
+                                "URL_ERROR",
+                                "URL नहीं मिली",
+                                null
+                            )
+                            return@setMethodCallHandler
+                        }
 
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        startActivity(intent)
+                        val intent =
+                            Intent(Intent.ACTION_VIEW, Uri.parse(url))
 
-        result.success(true)
-    } catch (e: Exception) {
-        result.error("URL_ERROR", e.message, null)
-    }
+                        startActivity(intent)
+                        result.success(true)
+                    } catch (e: Exception) {
+                        result.error(
+                            "URL_ERROR",
+                            e.message,
+                            null
+                        )
+                    }
                 }
+
+                // Volume बढ़ाना
+                "volumeUp" -> {
+                    try {
+                        val audioManager =
+                            getSystemService(AUDIO_SERVICE) as AudioManager
+
+                        audioManager.adjustStreamVolume(
+                            AudioManager.STREAM_MUSIC,
+                            AudioManager.ADJUST_RAISE,
+                            AudioManager.FLAG_SHOW_UI
+                        )
+
+                        result.success(true)
+                    } catch (e: Exception) {
+                        result.error(
+                            "VOLUME_ERROR",
+                            e.message,
+                            null
+                        )
+                    }
+                }
+
+                // Volume कम करना
+                "volumeDown" -> {
+                    try {
+                        val audioManager =
+                            getSystemService(AUDIO_SERVICE) as AudioManager
+
+                        audioManager.adjustStreamVolume(
+                            AudioManager.STREAM_MUSIC,
+                            AudioManager.ADJUST_LOWER,
+                            AudioManager.FLAG_SHOW_UI
+                        )
+
+                        result.success(true)
+                    } catch (e: Exception) {
+                        result.error(
+                            "VOLUME_ERROR",
+                            e.message,
+                            null
+                        )
+                    }
+                }
+
+                // Music mute
+                "volumeMute" -> {
+                    try {
+                        val audioManager =
+                            getSystemService(AUDIO_SERVICE) as AudioManager
+
+                        audioManager.adjustStreamVolume(
+                            AudioManager.STREAM_MUSIC,
+                            AudioManager.ADJUST_MUTE,
+                            AudioManager.FLAG_SHOW_UI
+                        )
+
+                        result.success(true)
+                    } catch (e: Exception) {
+                        result.error(
+                            "VOLUME_ERROR",
+                            e.message,
+                            null
+                        )
+                    }
+                }
+
+                // Volume maximum
+                "volumeMax" -> {
+                    try {
+                        val audioManager =
+                            getSystemService(AUDIO_SERVICE) as AudioManager
+
+                        val maxVolume =
+                            audioManager.getStreamMaxVolume(
+                                AudioManager.STREAM_MUSIC
+                            )
+
+                        audioManager.setStreamVolume(
+                            AudioManager.STREAM_MUSIC,
+                            maxVolume,
+                            AudioManager.FLAG_SHOW_UI
+                        )
+
+                        result.success(true)
+                    } catch (e: Exception) {
+                        result.error(
+                            "VOLUME_ERROR",
+                            e.message,
+                            null
+                        )
+                    }
+                }
+
                 else -> {
                     result.notImplemented()
                 }
