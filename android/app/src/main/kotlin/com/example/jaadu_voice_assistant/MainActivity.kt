@@ -6,6 +6,7 @@ import android.net.Uri
 import android.provider.Settings
 import android.provider.MediaStore
 import android.media.AudioManager
+import android.hardware.camera2.CameraManager
 import android.provider.Settings.ACTION_WIFI_SETTINGS
 import android.provider.Settings.ACTION_BLUETOOTH_SETTINGS
 import android.provider.Settings.ACTION_SETTINGS
@@ -293,6 +294,69 @@ class MainActivity : FlutterActivity() {
         result.success(true)
     } catch (e: Exception) {
         result.error("MUSIC_ERROR", e.message, null)
+    }
+}
+"torchOn" -> {
+    try {
+        val cameraManager =
+            getSystemService(CAMERA_SERVICE) as CameraManager
+
+        val cameraId = cameraManager.cameraIdList.firstOrNull { id ->
+            cameraManager.getCameraCharacteristics(id)
+                .get(android.hardware.camera2.CameraCharacteristics.FLASH_INFO_AVAILABLE)
+                == true
+        }
+
+        if (cameraId == null) {
+            result.error(
+                "TORCH_ERROR",
+                "इस फोन में torch उपलब्ध नहीं है",
+                null
+            )
+            return@setMethodCallHandler
+        }
+
+        cameraManager.setTorchMode(cameraId, true)
+        result.success(true)
+
+    } catch (e: Exception) {
+        result.error(
+            "TORCH_ERROR",
+            e.message,
+            null
+        )
+    }
+}
+
+"torchOff" -> {
+    try {
+        val cameraManager =
+            getSystemService(CAMERA_SERVICE) as CameraManager
+
+        val cameraId = cameraManager.cameraIdList.firstOrNull { id ->
+            cameraManager.getCameraCharacteristics(id)
+                .get(android.hardware.camera2.CameraCharacteristics.FLASH_INFO_AVAILABLE)
+                == true
+        }
+
+        if (cameraId == null) {
+            result.error(
+                "TORCH_ERROR",
+                "इस फोन में torch उपलब्ध नहीं है",
+                null
+            )
+            return@setMethodCallHandler
+        }
+
+        cameraManager.setTorchMode(cameraId, false)
+        result.success(true)
+
+    } catch (e: Exception) {
+        result.error(
+            "TORCH_ERROR",
+            e.message,
+            null
+        )
     }
 }
                 
