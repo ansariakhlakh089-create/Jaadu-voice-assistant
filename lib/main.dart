@@ -431,6 +431,20 @@ if (containsAny(text, [
     }
   }
 
+  Future<void> callContact(String name) async {
+  try {
+    await nativeChannel.invokeMethod('callContact', {
+      'name': name,
+    });
+  } on PlatformException catch (e) {
+    if (!mounted) return;
+
+    setState(() {
+      heardText = 'Contact call करने में समस्या: ${e.message}';
+    });
+  }
+  }
+  
   bool containsAny(String text, List<String> words) {
     for (final word in words) {
       if (text.contains(word)) {
