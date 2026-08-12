@@ -1,6 +1,7 @@
 package com.example.jaadu_voice_assistant
 
 import android.content.Intent
+import android.view.KeyEvent
 import android.net.Uri
 import android.provider.Settings
 import android.provider.MediaStore
@@ -227,7 +228,74 @@ class MainActivity : FlutterActivity() {
                         )
                     }
                 }
+                "musicPlay" -> {
+    try {
+        val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
 
+        audioManager.dispatchMediaKeyEvent(
+            KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY)
+        )
+        audioManager.dispatchMediaKeyEvent(
+            KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PLAY)
+        )
+
+        result.success(true)
+    } catch (e: Exception) {
+        result.error("MUSIC_ERROR", e.message, null)
+    }
+}
+
+"musicPause" -> {
+    try {
+        val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+
+        audioManager.dispatchMediaKeyEvent(
+            KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PAUSE)
+        )
+        audioManager.dispatchMediaKeyEvent(
+            KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PAUSE)
+        )
+
+        result.success(true)
+    } catch (e: Exception) {
+        result.error("MUSIC_ERROR", e.message, null)
+    }
+}
+
+"musicNext" -> {
+    try {
+        val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+
+        audioManager.dispatchMediaKeyEvent(
+            KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_NEXT)
+        )
+        audioManager.dispatchMediaKeyEvent(
+            KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_NEXT)
+        )
+
+        result.success(true)
+    } catch (e: Exception) {
+        result.error("MUSIC_ERROR", e.message, null)
+    }
+}
+
+"musicPrevious" -> {
+    try {
+        val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+
+        audioManager.dispatchMediaKeyEvent(
+            KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
+        )
+        audioManager.dispatchMediaKeyEvent(
+            KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
+        )
+
+        result.success(true)
+    } catch (e: Exception) {
+        result.error("MUSIC_ERROR", e.message, null)
+    }
+}
+                
                 else -> {
                     result.notImplemented()
                 }
