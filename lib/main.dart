@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:speech_to_text/speech_to_text.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   runApp(const JaaduApp());
@@ -35,6 +35,9 @@ class JaaduHome extends StatefulWidget {
 }
 
 class _JaaduHomeState extends State<JaaduHome> {
+  static const MethodChannel nativeChannel =
+      MethodChannel('jaadu/native');
+
   final SpeechToText speech = SpeechToText();
 
   bool isListening = false;
@@ -119,7 +122,6 @@ class _JaaduHomeState extends State<JaaduHome> {
     if (containsAny(text, [
       'youtube',
       'यूट्यूब',
-      'यूट्यूब खोलो',
     ])) {
       await openUrl('https://www.youtube.com');
       return;
@@ -146,17 +148,19 @@ class _JaaduHomeState extends State<JaaduHome> {
       return;
     }
 
-    // Chrome
+    // Chrome / Google
     if (containsAny(text, [
       'chrome',
       'क्रोम',
       'गूगल क्रोम',
+      'google',
+      'गूगल',
     ])) {
       await openUrl('https://www.google.com');
       return;
     }
 
-    // Google Maps
+    // Maps
     if (containsAny(text, [
       'maps',
       'map',
@@ -186,11 +190,11 @@ class _JaaduHomeState extends State<JaaduHome> {
       'camera',
       'कैमरा',
     ])) {
-      await openUrl('camera:');
+      await callNative('openCamera');
       return;
     }
 
-    // Gallery / Photos
+    // Gallery
     if (containsAny(text, [
       'gallery',
       'गैलरी',
@@ -198,7 +202,7 @@ class _JaaduHomeState extends State<JaaduHome> {
       'फोटो',
       'तस्वीर',
     ])) {
-      await openUrl('content://media/internal/images/media');
+      await callNative('openGallery');
       return;
     }
 
@@ -210,7 +214,7 @@ class _JaaduHomeState extends State<JaaduHome> {
       'कॉल',
       'call',
     ])) {
-      await openUrl('tel:');
+      await callNative('openPhone');
       return;
     }
 
@@ -221,7 +225,37 @@ class _JaaduHomeState extends State<JaaduHome> {
       'सेटिंग',
       'सेटिंग्स',
     ])) {
-      await openUrl('app-settings:');
+      await callNative('openSettings');
+      return;
+    }
+
+    // Wi-Fi
+    if (containsAny(text, [
+      'wifi',
+      'wi-fi',
+      'वाईफाई',
+      'वाई-फाई',
+    ])) {
+      await callNative('openWifi');
+      return;
+    }
+
+    // Bluetooth
+    if (containsAny(text, [
+      'bluetooth',
+      'ब्लूटूथ',
+    ])) {
+      await callNative('openBluetooth');
+      return;
+    }
+
+    // Location
+    if (containsAny(text, [
+      'location',
+      'लोकेशन',
+      'स्थान',
+    ])) {
+      await callNative('openLocation');
       return;
     }
 
@@ -230,8 +264,20 @@ class _JaaduHomeState extends State<JaaduHome> {
     setState(() {
       heardText =
           'मैंने सुना:\n"$command"\n\n'
-          'यह command अभी मेरे पास उपलब्ध नहीं है।';
+          'यह command अभी उपलब्ध नहीं है।';
     });
+  }
+
+  Future<void> callNative(String method) async {
+    try {
+      await nativeChannel.invokeMethod(method);
+    } on PlatformException catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        heardText = 'Command चलाने में समस्या: ${e.message}';
+      });
+    }
   }
 
   bool containsAny(String text, List<String> words) {
@@ -248,21 +294,17 @@ class _JaaduHomeState extends State<JaaduHome> {
     try {
       final uri = Uri.parse(url);
 
-      final opened = await launchUrl(
-        uri,
-        mode: LaunchMode.externalApplication,
-      );
-
-      if (!opened && mounted) {
-        setState(() {
-          heardText = 'यह app या service नहीं खुल पाई।';
-        });
-      }
-    } catch (e) {
+      await const MethodChannel(
+        'jaadu/native',
+      ).invokeMethod('openUrl', {
+        'url': url,
+      });
+    } catch (_) {
+      // Fallback intentionally left for the next native update.
       if (!mounted) return;
 
       setState(() {
-        heardText = 'Command चलाने में समस्या हुई।';
+        heardText = 'यह command अभी नहीं खुल पाई।';
       });
     }
   }
@@ -366,4 +408,3 @@ class _JaaduHomeState extends State<JaaduHome> {
     );
   }
 }
-      
