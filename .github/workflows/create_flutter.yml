@@ -1,0 +1,41 @@
+name: Create Flutter Project
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  create-flutter-project:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.2'
+          channel: stable
+
+      - name: Create Flutter project
+        run: |
+          if [ ! -f pubspec.yaml ]; then
+            flutter create .
+          fi
+
+      - name: Commit Flutter project
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git add .
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Create Flutter project"
+            git push
+          fi
