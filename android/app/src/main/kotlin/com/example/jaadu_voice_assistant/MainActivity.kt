@@ -14,6 +14,9 @@ import android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import android.Manifest
+import android.content.pm.PackageManager
+import android.provider.ContactsContract
 
 class MainActivity : FlutterActivity() {
 
@@ -98,6 +101,87 @@ class MainActivity : FlutterActivity() {
                     }
                 }
 
+                "callContact" -> {
+    try {
+        if (checkSelfPermission(Manifest.permission.READ_CONTACTS)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissions(
+                arrayOf(Manifest.permission.READ_CONTACTS),
+                1001
+            )
+
+            result.error(
+                "CONTACT_PERMISSION",
+                "Contacts permission required",
+                null
+            )
+            return@setMethodCallHandler
+        }
+
+        val contactName = call.argument<String>("name")
+
+        if (contactName.isNullOrBlank()) {
+            result.error(
+                "CONTACT_ERROR",
+                "Contact name नहीं मिला",
+                null
+            )
+            return@setMethodCallHandler
+        }
+
+        val projection = arrayOf(
+            ContactsContract.CommonDataKinds.Phone.NUMBER
+        )
+
+        val selection =
+            "${ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME} LIKE ?"
+
+        val selectionArgs = arrayOf("%$contactName%")
+
+        var phoneNumber: String? = null
+
+        contentResolver.query(
+            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+            projection,
+            selection,
+            selectionArgs,
+            null
+        )?.use { cursor ->
+
+            if (cursor.moveToFirst()) {
+                phoneNumber = cursor.getString(
+                    cursor.getColumnIndexOrThrow(
+                        ContactsContract.CommonDataKinds.Phone.NUMBER
+                    )
+                )
+            }
+        }
+
+        if (phoneNumber.isNullOrBlank()) {
+            result.error(
+                "CONTACT_NOT_FOUND",
+                "Contact नहीं मिला: $contactName",
+                null
+            )
+            return@setMethodCallHandler
+        }
+
+        val intent = Intent(Intent.ACTION_DIAL)
+        intent.data = Uri.parse("tel:${Uri.encode(phoneNumber)}")
+        startActivity(intent)
+
+        result.success(true)
+
+    } catch (e: Exception) {
+        result.error(
+            "CALL_ERROR",
+            e.message,
+            null
+        )
+    }
+                }
+                
                 "openAppSettings" -> {
                     try {
                         val intent =
@@ -359,7 +443,12 @@ class MainActivity : FlutterActivity() {
         )
     }
 }
-                
+
+// 👇 यहाँ callContact आएगा
+"callContact" -> {
+    // contact वाला code
+}
+           
                 else -> {
                     result.notImplemented()
                 }
