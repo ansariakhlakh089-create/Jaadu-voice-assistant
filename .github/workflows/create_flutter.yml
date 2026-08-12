@@ -23,7 +23,7 @@ jobs:
       - name: Create Flutter project
         run: |
           if [ ! -f pubspec.yaml ]; then
-            flutter create .
+            flutter create --project-name jaadu_voice_assistant .
           fi
 
       - name: Commit Flutter project
