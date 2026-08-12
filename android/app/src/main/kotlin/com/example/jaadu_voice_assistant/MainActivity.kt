@@ -443,11 +443,6 @@ class MainActivity : FlutterActivity() {
         )
     }
 }
-
-// 👇 यहाँ callContact आएगा
-"callContact" -> {
-    // contact वाला code
-}
            
                 else -> {
                     result.notImplemented()
