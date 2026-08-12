@@ -206,6 +206,31 @@ class _JaaduHomeState extends State<JaaduHome> {
       return;
     }
 
+    // Contact को कॉल करना
+if (text.contains('को कॉल करो') ||
+    text.contains('को फोन करो') ||
+    text.contains('को कॉल लगाओ') ||
+    text.contains('को फोन लगाओ') ||
+    text.contains('call करो') ||
+    text.contains('call लगाओ')) {
+  
+  String contactName = text;
+
+  contactName = contactName
+      .replaceAll('को कॉल करो', '')
+      .replaceAll('को फोन करो', '')
+      .replaceAll('को कॉल लगाओ', '')
+      .replaceAll('को फोन लगाओ', '')
+      .replaceAll('call करो', '')
+      .replaceAll('call लगाओ', '')
+      .trim();
+
+  if (contactName.isNotEmpty) {
+    await callContact(contactName);
+    return;
+  }
+}
+    
     // Phone / Dialer
     if (containsAny(text, [
       'phone',
