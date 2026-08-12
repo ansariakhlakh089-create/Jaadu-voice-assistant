@@ -311,7 +311,54 @@ if (containsAny(text, [
   await callNative('volumeMax');
   return;
 }
-    
+// Music Play
+if (containsAny(text, [
+  'गाना चलाओ',
+  'गाना बजाओ',
+  'music चलाओ',
+  'music बजाओ',
+  'play music',
+  'play song',
+])) {
+  await callNative('musicPlay');
+  return;
+}
+
+// Music Pause / Stop
+if (containsAny(text, [
+  'गाना रोक दो',
+  'गाना बंद करो',
+  'गाना pause करो',
+  'music बंद करो',
+  'music रोक दो',
+  'pause music',
+  'stop music',
+])) {
+  await callNative('musicPause');
+  return;
+}
+
+// अगला गाना
+if (containsAny(text, [
+  'अगला गाना',
+  'next song',
+  'next music',
+  'अगला song',
+])) {
+  await callNative('musicNext');
+  return;
+}
+
+// पिछला गाना
+if (containsAny(text, [
+  'पिछला गाना',
+  'previous song',
+  'previous music',
+  'पिछला song',
+])) {
+  await callNative('musicPrevious');
+  return;
+}   
     if (!mounted) return;
 
     setState(() {
