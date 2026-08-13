@@ -17,6 +17,8 @@ import io.flutter.plugin.common.MethodChannel
 import android.Manifest
 import android.content.pm.PackageManager
 import android.provider.ContactsContract
+import android.os.Handler
+import android.os.Looper
 
 class MainActivity : FlutterActivity() {
 
