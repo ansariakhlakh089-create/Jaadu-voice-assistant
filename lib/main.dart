@@ -173,15 +173,15 @@ class _JaaduHomeState extends State<JaaduHome> {
       return;
     }
 
-    // Music
+    // Music app खोलना
     if (containsAny(text, [
-      'music',
-      'म्यूजिक',
-      'गाना',
-      'गाने',
-      'संगीत',
+      'music खोलो',
+      'म्यूजिक खोलो',
+      'music app खोलो',
+      'म्यूजिक ऐप खोलो',
+      'संगीत खोलो',
     ])) {
-      await openUrl('https://musicplay');
+      await callNative('musicPlay');
       return;
     }
 
@@ -207,30 +207,30 @@ class _JaaduHomeState extends State<JaaduHome> {
     }
 
     // Contact को कॉल करना
-if (text.contains('को कॉल करो') ||
-    text.contains('को फोन करो') ||
-    text.contains('को कॉल लगाओ') ||
-    text.contains('को फोन लगाओ') ||
-    text.contains('call करो') ||
-    text.contains('call लगाओ')) {
-  
-  String contactName = text;
+    if (text.contains('को कॉल करो') ||
+        text.contains('को फोन करो') ||
+        text.contains('को कॉल लगाओ') ||
+        text.contains('को फोन लगाओ') ||
+        text.contains('call करो') ||
+        text.contains('call लगाओ')) {
 
-  contactName = contactName
-      .replaceAll('को कॉल करो', '')
-      .replaceAll('को फोन करो', '')
-      .replaceAll('को कॉल लगाओ', '')
-      .replaceAll('को फोन लगाओ', '')
-      .replaceAll('call करो', '')
-      .replaceAll('call लगाओ', '')
-      .trim();
+      String contactName = text;
 
-  if (contactName.isNotEmpty) {
-    await callContact(contactName);
-    return;
-  }
-}
-    
+      contactName = contactName
+          .replaceAll('को कॉल करो', '')
+          .replaceAll('को फोन करो', '')
+          .replaceAll('को कॉल लगाओ', '')
+          .replaceAll('को फोन लगाओ', '')
+          .replaceAll('call करो', '')
+          .replaceAll('call लगाओ', '')
+          .trim();
+
+      if (contactName.isNotEmpty) {
+        await callContact(contactName);
+        return;
+      }
+    }
+
     // Phone / Dialer
     if (containsAny(text, [
       'phone',
@@ -283,133 +283,136 @@ if (text.contains('को कॉल करो') ||
       await callNative('openLocation');
       return;
     }
-     // Volume बढ़ाओ
-if (containsAny(text, [
-  'volume बढ़ाओ',
-  'वॉल्यूम बढ़ाओ',
-  'आवाज बढ़ाओ',
-  'आवाज़ बढ़ाओ',
-  'sound बढ़ाओ',
-  'आवाज तेज करो',
-  'आवाज़ तेज करो',
-])) {
-  await callNative('volumeUp');
-  return;
-}
 
-// Volume कम करो
-if (containsAny(text, [
-  'volume कम करो',
-  'वॉल्यूम कम करो',
-  'आवाज कम करो',
-  'आवाज़ कम करो',
-  'sound कम करो',
-  'आवाज धीमी करो',
-  'आवाज़ धीमी करो',
-])) {
-  await callNative('volumeDown');
-  return;
-}
+    // Volume बढ़ाओ
+    if (containsAny(text, [
+      'volume बढ़ाओ',
+      'वॉल्यूम बढ़ाओ',
+      'आवाज बढ़ाओ',
+      'आवाज़ बढ़ाओ',
+      'sound बढ़ाओ',
+      'आवाज तेज करो',
+      'आवाज़ तेज करो',
+    ])) {
+      await callNative('volumeUp');
+      return;
+    }
 
-// Volume mute
-if (containsAny(text, [
-  'volume mute करो',
-  'वॉल्यूम म्यूट करो',
-  'आवाज बंद करो',
-  'आवाज़ बंद करो',
-  'sound बंद करो',
-  'म्यूट करो',
-])) {
-  await callNative('volumeMute');
-  return;
-}
+    // Volume कम करो
+    if (containsAny(text, [
+      'volume कम करो',
+      'वॉल्यूम कम करो',
+      'आवाज कम करो',
+      'आवाज़ कम करो',
+      'sound कम करो',
+      'आवाज धीमी करो',
+      'आवाज़ धीमी करो',
+    ])) {
+      await callNative('volumeDown');
+      return;
+    }
 
-// Volume full
-if (containsAny(text, [
-  'volume full करो',
-  'वॉल्यूम फुल करो',
-  'आवाज full करो',
-  'आवाज़ फुल करो',
-  'volume maximum करो',
-  'वॉल्यूम maximum करो',
-])) {
-  await callNative('volumeMax');
-  return;
-}
-// Music Play
-if (containsAny(text, [
-  'गाना चलाओ',
-  'गाना बजाओ',
-  'music चलाओ',
-  'music बजाओ',
-  'play music',
-  'play song',
-])) {
-  await callNative('musicPlay');
-  return;
-}
+    // Volume mute
+    if (containsAny(text, [
+      'volume mute करो',
+      'वॉल्यूम म्यूट करो',
+      'आवाज बंद करो',
+      'आवाज़ बंद करो',
+      'sound बंद करो',
+      'म्यूट करो',
+    ])) {
+      await callNative('volumeMute');
+      return;
+    }
 
-// Music Pause / Stop
-if (containsAny(text, [
-  'गाना रोक दो',
-  'गाना बंद करो',
-  'गाना pause करो',
-  'music बंद करो',
-  'music रोक दो',
-  'pause music',
-  'stop music',
-])) {
-  await callNative('musicPause');
-  return;
-}
+    // Volume full
+    if (containsAny(text, [
+      'volume full करो',
+      'वॉल्यूम फुल करो',
+      'आवाज full करो',
+      'आवाज़ फुल करो',
+      'volume maximum करो',
+      'वॉल्यूम maximum करो',
+    ])) {
+      await callNative('volumeMax');
+      return;
+    }
 
-// अगला गाना
-if (containsAny(text, [
-  'अगला गाना',
-  'next song',
-  'next music',
-  'अगला song',
-])) {
-  await callNative('musicNext');
-  return;
-}
+    // Music Play
+    if (containsAny(text, [
+      'गाना चलाओ',
+      'गाना बजाओ',
+      'music चलाओ',
+      'music बजाओ',
+      'play music',
+      'play song',
+    ])) {
+      await callNative('musicPlay');
+      return;
+    }
 
-// पिछला गाना
-if (containsAny(text, [
-  'पिछला गाना',
-  'previous song',
-  'previous music',
-  'पिछला song',
-])) {
-  await callNative('musicPrevious');
-  return;
-} 
-// Torch ON
-if (containsAny(text, [
-  'टॉर्च चालू करो',
-  'टॉर्च ऑन करो',
-  'torch चालू करो',
-  'torch on करो',
-  'flashlight चालू करो',
-  'फ्लैशलाइट चालू करो',
-])) {
-  await callNative('torchOn');
-  return;
-}
+    // Music Pause / Stop
+    if (containsAny(text, [
+      'गाना रोक दो',
+      'गाना बंद करो',
+      'गाना pause करो',
+      'music बंद करो',
+      'music रोक दो',
+      'pause music',
+      'stop music',
+    ])) {
+      await callNative('musicPause');
+      return;
+    }
 
-// Torch OFF
-if (containsAny(text, [
-  'टॉर्च बंद करो',
-  'टॉर्च ऑफ करो',
-  'torch बंद करो',
-  'torch off करो',
-  'flashlight बंद करो',
-  'फ्लैशलाइट बंद करो',
-])) {
-  await callNative('torchOff');
-  return;
-}
-    
+    // अगला गाना
+    if (containsAny(text, [
+      'अगला गाना',
+      'next song',
+      'next music',
+      'अगला song',
+    ])) {
+      await callNative('musicNext');
+      return;
+    }
+
+    // पिछला गाना
+    if (containsAny(text, [
+      'पिछला गाना',
+      'previous song',
+      'previous music',
+      'पिछला song',
+    ])) {
+      await callNative('musicPrevious');
+      return;
+    }
+
+    // Torch ON
+    if (containsAny(text, [
+      'टॉर्च चालू करो',
+      'टॉर्च ऑन करो',
+      'torch चालू करो',
+      'torch on करो',
+      'flashlight चालू करो',
+      'फ्लैशलाइट चालू करो',
+    ])) {
+      await callNative('torchOn');
+      return;
+    }
+
+    // Torch OFF
+    if (containsAny(text, [
+      'टॉर्च बंद करो',
+      'टॉर्च ऑफ करो',
+      'torch बंद करो',
+      'torch off करो',
+      'flashlight बंद करो',
+      'फ्लैशलाइट बंद करो',
+    ])) {
+      await callNative('torchOff');
+      return;
+    }
+
     if (!mounted) return;
 
     setState(() {
@@ -432,19 +435,19 @@ if (containsAny(text, [
   }
 
   Future<void> callContact(String name) async {
-  try {
-    await nativeChannel.invokeMethod('callContact', {
-      'name': name,
-    });
-  } on PlatformException catch (e) {
-    if (!mounted) return;
+    try {
+      await nativeChannel.invokeMethod('callContact', {
+        'name': name,
+      });
+    } on PlatformException catch (e) {
+      if (!mounted) return;
 
-    setState(() {
-      heardText = 'Contact call करने में समस्या: ${e.message}';
-    });
+      setState(() {
+        heardText = 'Contact call करने में समस्या: ${e.message}';
+      });
+    }
   }
-  }
-  
+
   bool containsAny(String text, List<String> words) {
     for (final word in words) {
       if (text.contains(word)) {
