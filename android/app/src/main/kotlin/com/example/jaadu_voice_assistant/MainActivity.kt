@@ -514,6 +514,113 @@ class MainActivity : FlutterActivity() {
                     }
                 }
 
+                "openInstalledApp" -> {
+    try {
+        val appName = call.argument<String>("appName")
+
+        if (appName.isNullOrBlank()) {
+            result.error(
+                "APP_NAME_ERROR",
+                "App name नहीं मिला",
+                null
+            )
+            return@setMethodCallHandler
+        }
+
+        val packageManager = packageManager
+
+        val launcherIntent = Intent(
+            Intent.ACTION_MAIN,
+            null
+        ).apply {
+            addCategory(Intent.CATEGORY_LAUNCHER)
+        }
+
+        val apps = packageManager.queryIntentActivities(
+            launcherIntent,
+            0
+        )
+
+        val searchName = appName
+            .lowercase()
+            .trim()
+
+        var matchedPackage: String? = null
+
+        // पहले exact match
+        for (resolveInfo in apps) {
+            val label = resolveInfo
+                .loadLabel(packageManager)
+                .toString()
+                .lowercase()
+                .trim()
+
+            if (label == searchName) {
+                matchedPackage =
+                    resolveInfo.activityInfo.packageName
+                break
+            }
+        }
+
+        // फिर partial match
+        if (matchedPackage == null) {
+            for (resolveInfo in apps) {
+                val label = resolveInfo
+                    .loadLabel(packageManager)
+                    .toString()
+                    .lowercase()
+                    .trim()
+
+                if (label.contains(searchName) ||
+                    searchName.contains(label)
+                ) {
+                    matchedPackage =
+                        resolveInfo.activityInfo.packageName
+                    break
+                }
+            }
+        }
+
+        if (matchedPackage == null) {
+            result.error(
+                "APP_NOT_FOUND",
+                "फोन में \"$appName\" नाम का ऐप नहीं मिला",
+                null
+            )
+            return@setMethodCallHandler
+        }
+
+        val launchIntent =
+            packageManager.getLaunchIntentForPackage(
+                matchedPackage
+            )
+
+        if (launchIntent == null) {
+            result.error(
+                "APP_LAUNCH_ERROR",
+                "इस ऐप को खोलना संभव नहीं है",
+                null
+            )
+            return@setMethodCallHandler
+        }
+
+        launchIntent.addFlags(
+            Intent.FLAG_ACTIVITY_NEW_TASK
+        )
+
+        startActivity(launchIntent)
+
+        result.success(true)
+
+    } catch (e: Exception) {
+        result.error(
+            "APP_OPEN_ERROR",
+            e.message,
+            null
+        )
+    }
+                }
+                
                 else -> {
                     result.notImplemented()
                 }
