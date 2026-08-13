@@ -7,16 +7,20 @@ import android.provider.Settings
 import android.provider.MediaStore
 import android.media.AudioManager
 import android.hardware.camera2.CameraManager
+
 import android.provider.Settings.ACTION_WIFI_SETTINGS
 import android.provider.Settings.ACTION_BLUETOOTH_SETTINGS
 import android.provider.Settings.ACTION_SETTINGS
 import android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS
+
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+
 import android.Manifest
 import android.content.pm.PackageManager
 import android.provider.ContactsContract
+
 import android.os.Handler
 import android.os.Looper
 
@@ -620,6 +624,124 @@ class MainActivity : FlutterActivity() {
         )
     }
                 }
+
+"openInstalledApp" -> {
+    try {
+        val requestedName =
+            call.argument<String>("appName")?.trim()
+
+        if (requestedName.isNullOrBlank()) {
+            result.error(
+                "APP_NAME_ERROR",
+                "App name नहीं मिला",
+                null
+            )
+            return@setMethodCallHandler
+        }
+
+        val packageManager = packageManager
+
+        // केवल वे apps जिनके launcher icon हैं
+        val launcherIntent = Intent(Intent.ACTION_MAIN).apply {
+            addCategory(Intent.CATEGORY_LAUNCHER)
+        }
+
+        val apps =
+            packageManager.queryIntentActivities(
+                launcherIntent,
+                PackageManager.MATCH_ALL
+            )
+
+        fun normalize(value: String): String {
+            return value
+                .lowercase()
+                .replace(" ", "")
+                .replace("-", "")
+                .replace("_", "")
+                .replace(".", "")
+        }
+
+        val wanted = normalize(requestedName)
+
+        var selectedPackage: String? = null
+        var bestScore = 0
+
+        for (resolveInfo in apps) {
+
+            val appInfo = resolveInfo.activityInfo.applicationInfo
+
+            val label =
+                packageManager.getApplicationLabel(appInfo)
+                    ?.toString()
+                    ?: continue
+
+            val normalizedLabel = normalize(label)
+
+            var score = 0
+
+            // Exact match
+            if (normalizedLabel == wanted) {
+                score = 100
+            }
+            // App name contains spoken name
+            else if (
+                normalizedLabel.contains(wanted) ||
+                wanted.contains(normalizedLabel)
+            ) {
+                score = 80
+            }
+            // Original lowercase text match
+            else if (
+                label.lowercase().contains(
+                    requestedName.lowercase()
+                )
+            ) {
+                score = 70
+            }
+
+            if (score > bestScore) {
+                bestScore = score
+                selectedPackage = appInfo.packageName
+            }
+        }
+
+        if (selectedPackage == null) {
+            result.error(
+                "APP_NOT_FOUND",
+                "App नहीं मिला: $requestedName",
+                null
+            )
+            return@setMethodCallHandler
+        }
+
+        val launchIntent =
+            packageManager.getLaunchIntentForPackage(
+                selectedPackage
+            )
+
+        if (launchIntent == null) {
+            result.error(
+                "APP_LAUNCH_ERROR",
+                "इस ऐप को launch नहीं किया जा सकता",
+                null
+            )
+            return@setMethodCallHandler
+        }
+
+        launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+        startActivity(launchIntent)
+
+        result.success(true)
+
+    } catch (e: Exception) {
+        result.error(
+            "APP_OPEN_ERROR",
+            e.message,
+            null
+        )
+    }
+}
                 
                 else -> {
                     result.notImplemented()
