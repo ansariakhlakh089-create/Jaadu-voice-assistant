@@ -102,86 +102,86 @@ class MainActivity : FlutterActivity() {
                 }
 
                 "callContact" -> {
-    try {
-        if (checkSelfPermission(Manifest.permission.READ_CONTACTS)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissions(
-                arrayOf(Manifest.permission.READ_CONTACTS),
-                1001
-            )
+                    try {
+                        if (checkSelfPermission(Manifest.permission.READ_CONTACTS)
+                            != PackageManager.PERMISSION_GRANTED
+                        ) {
+                            requestPermissions(
+                                arrayOf(Manifest.permission.READ_CONTACTS),
+                                1001
+                            )
 
-            result.error(
-                "CONTACT_PERMISSION",
-                "Contacts permission required",
-                null
-            )
-            return@setMethodCallHandler
-        }
+                            result.error(
+                                "CONTACT_PERMISSION",
+                                "Contacts permission required",
+                                null
+                            )
+                            return@setMethodCallHandler
+                        }
 
-        val contactName = call.argument<String>("name")
+                        val contactName = call.argument<String>("name")
 
-        if (contactName.isNullOrBlank()) {
-            result.error(
-                "CONTACT_ERROR",
-                "Contact name नहीं मिला",
-                null
-            )
-            return@setMethodCallHandler
-        }
+                        if (contactName.isNullOrBlank()) {
+                            result.error(
+                                "CONTACT_ERROR",
+                                "Contact name not provided",
+                                null
+                            )
+                            return@setMethodCallHandler
+                        }
 
-        val projection = arrayOf(
-            ContactsContract.CommonDataKinds.Phone.NUMBER
-        )
+                        val projection = arrayOf(
+                            ContactsContract.CommonDataKinds.Phone.NUMBER
+                        )
 
-        val selection =
-            "${ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME} LIKE ?"
+                        val selection =
+                            "${ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME} LIKE ?"
 
-        val selectionArgs = arrayOf("%$contactName%")
+                        val selectionArgs = arrayOf("%$contactName%")
 
-        var phoneNumber: String? = null
+                        var phoneNumber: String? = null
 
-        contentResolver.query(
-            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-            projection,
-            selection,
-            selectionArgs,
-            null
-        )?.use { cursor ->
+                        contentResolver.query(
+                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                            projection,
+                            selection,
+                            selectionArgs,
+                            null
+                        )?.use { cursor ->
 
-            if (cursor.moveToFirst()) {
-                phoneNumber = cursor.getString(
-                    cursor.getColumnIndexOrThrow(
-                        ContactsContract.CommonDataKinds.Phone.NUMBER
-                    )
-                )
-            }
-        }
+                            if (cursor.moveToFirst()) {
+                                phoneNumber = cursor.getString(
+                                    cursor.getColumnIndexOrThrow(
+                                        ContactsContract.CommonDataKinds.Phone.NUMBER
+                                    )
+                                )
+                            }
+                        }
 
-        if (phoneNumber.isNullOrBlank()) {
-            result.error(
-                "CONTACT_NOT_FOUND",
-                "Contact नहीं मिला: $contactName",
-                null
-            )
-            return@setMethodCallHandler
-        }
+                        if (phoneNumber.isNullOrBlank()) {
+                            result.error(
+                                "CONTACT_NOT_FOUND",
+                                "Contact not found: $contactName",
+                                null
+                            )
+                            return@setMethodCallHandler
+                        }
 
-        val intent = Intent(Intent.ACTION_DIAL)
-        intent.data = Uri.parse("tel:${Uri.encode(phoneNumber)}")
-        startActivity(intent)
+                        val intent = Intent(Intent.ACTION_DIAL)
+                        intent.data = Uri.parse("tel:${Uri.encode(phoneNumber)}")
+                        startActivity(intent)
 
-        result.success(true)
+                        result.success(true)
 
-    } catch (e: Exception) {
-        result.error(
-            "CALL_ERROR",
-            e.message,
-            null
-        )
-    }
+                    } catch (e: Exception) {
+                        result.error(
+                            "CALL_ERROR",
+                            e.message,
+                            null
+                        )
+                    }
                 }
-                
+
                 "openAppSettings" -> {
                     try {
                         val intent =
@@ -201,7 +201,7 @@ class MainActivity : FlutterActivity() {
                         if (url == null) {
                             result.error(
                                 "URL_ERROR",
-                                "URL नहीं मिली",
+                                "URL not provided",
                                 null
                             )
                             return@setMethodCallHandler
@@ -221,7 +221,7 @@ class MainActivity : FlutterActivity() {
                     }
                 }
 
-                // Volume बढ़ाना
+                // Volume up
                 "volumeUp" -> {
                     try {
                         val audioManager =
@@ -243,7 +243,7 @@ class MainActivity : FlutterActivity() {
                     }
                 }
 
-                // Volume कम करना
+                // Volume down
                 "volumeDown" -> {
                     try {
                         val audioManager =
@@ -265,7 +265,7 @@ class MainActivity : FlutterActivity() {
                     }
                 }
 
-                // Music mute
+                // Mute
                 "volumeMute" -> {
                     try {
                         val audioManager =
@@ -313,104 +313,106 @@ class MainActivity : FlutterActivity() {
                         )
                     }
                 }
+
                 "musicPlay" -> {
-    try {
-        val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+                    try {
+                        val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
 
-        audioManager.dispatchMediaKeyEvent(
-            KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY)
-        )
-        audioManager.dispatchMediaKeyEvent(
-            KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PLAY)
-        )
+                        audioManager.dispatchMediaKeyEvent(
+                            KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY)
+                        )
+                        audioManager.dispatchMediaKeyEvent(
+                            KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PLAY)
+                        )
 
-        result.success(true)
-    } catch (e: Exception) {
-        result.error("MUSIC_ERROR", e.message, null)
-    }
-}
+                        result.success(true)
+                    } catch (e: Exception) {
+                        result.error("MUSIC_ERROR", e.message, null)
+                    }
+                }
 
-"musicPause" -> {
-    try {
-        val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+                "musicPause" -> {
+                    try {
+                        val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
 
-        audioManager.dispatchMediaKeyEvent(
-            KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PAUSE)
-        )
-        audioManager.dispatchMediaKeyEvent(
-            KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PAUSE)
-        )
+                        audioManager.dispatchMediaKeyEvent(
+                            KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PAUSE)
+                        )
+                        audioManager.dispatchMediaKeyEvent(
+                            KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PAUSE)
+                        )
 
-        result.success(true)
-    } catch (e: Exception) {
-        result.error("MUSIC_ERROR", e.message, null)
-    }
-}
+                        result.success(true)
+                    } catch (e: Exception) {
+                        result.error("MUSIC_ERROR", e.message, null)
+                    }
+                }
 
-"musicNext" -> {
-    try {
-        val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+                "musicNext" -> {
+                    try {
+                        val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
 
-        audioManager.dispatchMediaKeyEvent(
-            KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_NEXT)
-        )
-        audioManager.dispatchMediaKeyEvent(
-            KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_NEXT)
-        )
+                        audioManager.dispatchMediaKeyEvent(
+                            KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_NEXT)
+                        )
+                        audioManager.dispatchMediaKeyEvent(
+                            KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_NEXT)
+                        )
 
-        result.success(true)
-    } catch (e: Exception) {
-        result.error("MUSIC_ERROR", e.message, null)
-    }
-}
+                        result.success(true)
+                    } catch (e: Exception) {
+                        result.error("MUSIC_ERROR", e.message, null)
+                    }
+                }
 
-"musicPrevious" -> {
-    try {
-        val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+                "musicPrevious" -> {
+                    try {
+                        val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
 
-        audioManager.dispatchMediaKeyEvent(
-            KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
-        )
-        audioManager.dispatchMediaKeyEvent(
-            KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
-        )
+                        audioManager.dispatchMediaKeyEvent(
+                            KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
+                        )
+                        audioManager.dispatchMediaKeyEvent(
+                            KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
+                        )
 
-        result.success(true)
-    } catch (e: Exception) {
-        result.error("MUSIC_ERROR", e.message, null)
-    }
-}
-"torchOn" -> {
-    try {
-        val cameraManager =
-            getSystemService(CAMERA_SERVICE) as CameraManager
+                        result.success(true)
+                    } catch (e: Exception) {
+                        result.error("MUSIC_ERROR", e.message, null)
+                    }
+                }
 
-        val cameraId = cameraManager.cameraIdList.firstOrNull { id ->
-            cameraManager.getCameraCharacteristics(id)
-                .get(android.hardware.camera2.CameraCharacteristics.FLASH_INFO_AVAILABLE)
-                == true
-        }
+                "torchOn" -> {
+                    try {
+                        val cameraManager =
+                            getSystemService(CAMERA_SERVICE) as CameraManager
 
-        if (cameraId == null) {
-            result.error(
-                "TORCH_ERROR",
-                "इस फोन में torch उपलब्ध नहीं है",
-                null
-            )
-            return@setMethodCallHandler
-        }
+                        val cameraId = cameraManager.cameraIdList.firstOrNull { id ->
+                            cameraManager.getCameraCharacteristics(id)
+                                .get(android.hardware.camera2.CameraCharacteristics.FLASH_INFO_AVAILABLE)
+                                == true
+                        }
 
-        cameraManager.setTorchMode(cameraId, true)
-        result.success(true)
+                        if (cameraId == null) {
+                            result.error(
+                                "TORCH_ERROR",
+                                "Torch not available on this device",
+                                null
+                            )
+                            return@setMethodCallHandler
+                        }
 
-    } catch (e: Exception) {
-        result.error(
-            "TORCH_ERROR",
-            e.message,
-            null
-        )
-    }
-}
+                        cameraManager.setTorchMode(cameraId, true)
+                        result.success(true)
+
+                    } catch (e: Exception) {
+                        result.error(
+                            "TORCH_ERROR",
+                            e.message,
+                            null
+                        )
+                    }
+                }
 
                 "torchOff" -> {
                     try {
@@ -428,7 +430,7 @@ class MainActivity : FlutterActivity() {
                         if (cameraId == null) {
                             result.error(
                                 "TORCH_ERROR",
-                                "इस फोन में torch उपलब्ध नहीं है",
+                                "Torch not available on this device",
                                 null
                             )
                             return@setMethodCallHandler
