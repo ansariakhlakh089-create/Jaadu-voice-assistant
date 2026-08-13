@@ -412,38 +412,40 @@ class MainActivity : FlutterActivity() {
     }
 }
 
-"torchOff" -> {
-    try {
-        val cameraManager =
-            getSystemService(CAMERA_SERVICE) as CameraManager
+                "torchOff" -> {
+                    try {
+                        val cameraManager =
+                            getSystemService(CAMERA_SERVICE) as CameraManager
 
-        val cameraId = cameraManager.cameraIdList.firstOrNull { id ->
-            cameraManager.getCameraCharacteristics(id)
-                .get(android.hardware.camera2.CameraCharacteristics.FLASH_INFO_AVAILABLE)
-                == true
-        }
+                        val cameraId = cameraManager.cameraIdList.firstOrNull { id ->
+                            cameraManager.getCameraCharacteristics(id)
+                                .get(
+                                    android.hardware.camera2.CameraCharacteristics
+                                        .FLASH_INFO_AVAILABLE
+                                ) == true
+                        }
 
-        if (cameraId == null) {
-            result.error(
-                "TORCH_ERROR",
-                "इस फोन में torch उपलब्ध नहीं है",
-                null
-            )
-            return@setMethodCallHandler
-        }
+                        if (cameraId == null) {
+                            result.error(
+                                "TORCH_ERROR",
+                                "इस फोन में torch उपलब्ध नहीं है",
+                                null
+                            )
+                            return@setMethodCallHandler
+                        }
 
-        cameraManager.setTorchMode(cameraId, false)
-        result.success(true)
+                        cameraManager.setTorchMode(cameraId, false)
+                        result.success(true)
 
-    } catch (e: Exception) {
-        result.error(
-            "TORCH_ERROR",
-            e.message,
-            null
-        )
-    }
-}
-           
+                    } catch (e: Exception) {
+                        result.error(
+                            "TORCH_ERROR",
+                            e.message,
+                            null
+                        )
+                    }
+                }
+
                 else -> {
                     result.notImplemented()
                 }
