@@ -115,105 +115,69 @@ class _JaaduHomeState extends State<JaaduHome> {
     });
   }
 
+  // ============================================================
+  // MAIN VOICE COMMAND PROCESSOR
+  // ============================================================
+
   Future<void> handleCommand(String command) async {
     final text = command.toLowerCase().trim();
 
-    // YouTube
-    if (containsAny(text, [
-      'youtube',
-      'यूट्यूब',
-    ])) {
-      await openUrl('https://www.youtube.com');
-      return;
-    }
+    // ----------------------------------------------------------
+    // 1. CAMERA
+    // ----------------------------------------------------------
 
-    // Instagram
-    if (containsAny(text, [
-      'instagram',
-      'इंस्टाग्राम',
-      'इंस्टा',
-      'रील',
-    ])) {
-      await openUrl('https://www.instagram.com');
-      return;
-    }
-
-    // WhatsApp
-    if (containsAny(text, [
-      'whatsapp',
-      'व्हाट्सएप',
-      'वाट्सएप',
-    ])) {
-      await openUrl('https://wa.me/');
-      return;
-    }
-
-    // Chrome / Google
-    if (containsAny(text, [
-      'chrome',
-      'क्रोम',
-      'गूगल क्रोम',
-      'google',
-      'गूगल',
-    ])) {
-      await openUrl('https://www.google.com');
-      return;
-    }
-
-    // Maps
-    if (containsAny(text, [
-      'maps',
-      'map',
-      'मैप',
-      'मैप्स',
-      'गूगल मैप',
-      'गूगल मैप्स',
-    ])) {
-      await openUrl('https://maps.google.com');
-      return;
-    }
-
-    // Music app खोलना
-    if (containsAny(text, [
-      'music खोलो',
-      'म्यूजिक खोलो',
-      'music app खोलो',
-      'म्यूजिक ऐप खोलो',
-      'संगीत खोलो',
-    ])) {
-      await callNative('musicPlay');
-      return;
-    }
-
-    // Camera
     if (containsAny(text, [
       'camera',
       'कैमरा',
+      'कैमरा खोलो',
+      'कैमरा चालू करो',
     ])) {
       await callNative('openCamera');
       return;
     }
 
-    // Gallery
+    // ----------------------------------------------------------
+    // 2. GALLERY
+    // ----------------------------------------------------------
+
     if (containsAny(text, [
       'gallery',
       'गैलरी',
       'photos',
       'फोटो',
+      'फोटोज',
       'तस्वीर',
+      'तस्वीरें',
     ])) {
       await callNative('openGallery');
       return;
     }
 
-    // Contact को कॉल करना
+    // ----------------------------------------------------------
+    // 3. PHONE / DIALER
+    // ----------------------------------------------------------
+
+    if (containsAny(text, [
+      'dialer',
+      'डायलर',
+      'फोन खोलो',
+      'फोन चालू करो',
+      'phone',
+    ])) {
+      await callNative('openPhone');
+      return;
+    }
+
+    // ----------------------------------------------------------
+    // 4. CONTACT CALL
+    // ----------------------------------------------------------
+
     if (text.contains('को कॉल करो') ||
         text.contains('को फोन करो') ||
         text.contains('को कॉल लगाओ') ||
         text.contains('को फोन लगाओ') ||
         text.contains('call करो') ||
         text.contains('call लगाओ')) {
-
       String contactName = text;
 
       contactName = contactName
@@ -231,60 +195,144 @@ class _JaaduHomeState extends State<JaaduHome> {
       }
     }
 
-    // Phone / Dialer
-    if (containsAny(text, [
-      'phone',
-      'फोन',
-      'डायलर',
-      'कॉल',
-      'call',
-    ])) {
-      await callNative('openPhone');
-      return;
-    }
+    // ----------------------------------------------------------
+    // 5. SETTINGS
+    // ----------------------------------------------------------
 
-    // Settings
     if (containsAny(text, [
       'settings',
       'setting',
       'सेटिंग',
       'सेटिंग्स',
+      'सेटिंग खोलो',
     ])) {
       await callNative('openSettings');
       return;
     }
 
-    // Wi-Fi
+    // ----------------------------------------------------------
+    // 6. WIFI
+    // ----------------------------------------------------------
+
     if (containsAny(text, [
       'wifi',
       'wi-fi',
       'वाईफाई',
+      'वाई फाई',
       'वाई-फाई',
+      'वाईफाई खोलो',
+      'wifi खोलो',
+      'wifi चालू करो',
+      'wifi on करो',
     ])) {
       await callNative('openWifi');
       return;
     }
 
-    // Bluetooth
+    // ----------------------------------------------------------
+    // 7. BLUETOOTH
+    // ----------------------------------------------------------
+
     if (containsAny(text, [
       'bluetooth',
       'ब्लूटूथ',
+      'ब्लूटूथ खोलो',
+      'bluetooth चालू करो',
+      'bluetooth on करो',
     ])) {
       await callNative('openBluetooth');
       return;
     }
 
-    // Location
+    // ----------------------------------------------------------
+    // 8. LOCATION
+    // ----------------------------------------------------------
+
     if (containsAny(text, [
       'location',
       'लोकेशन',
       'स्थान',
+      'लोकेशन खोलो',
+      'लोकेशन चालू करो',
+      'location on करो',
     ])) {
       await callNative('openLocation');
       return;
     }
 
-    // Volume बढ़ाओ
+    // ----------------------------------------------------------
+    // 9. YOUTUBE
+    // ----------------------------------------------------------
+
+    if (containsAny(text, [
+      'youtube',
+      'यूट्यूब',
+      'यूट्यूब खोलो',
+    ])) {
+      await openUrl('https://www.youtube.com');
+      return;
+    }
+
+    // ----------------------------------------------------------
+    // 10. INSTAGRAM
+    // ----------------------------------------------------------
+
+    if (containsAny(text, [
+      'instagram',
+      'इंस्टाग्राम',
+      'इंस्टा',
+      'रील',
+    ])) {
+      await openUrl('https://www.instagram.com');
+      return;
+    }
+
+    // ----------------------------------------------------------
+    // 11. WHATSAPP
+    // ----------------------------------------------------------
+
+    if (containsAny(text, [
+      'whatsapp',
+      'व्हाट्सएप',
+      'वाट्सएप',
+    ])) {
+      await openInstalledApp('whatsapp');
+      return;
+    }
+
+    // ----------------------------------------------------------
+    // 12. CHROME
+    // ----------------------------------------------------------
+
+    if (containsAny(text, [
+      'chrome',
+      'क्रोम',
+      'गूगल क्रोम',
+    ])) {
+      await openInstalledApp('chrome');
+      return;
+    }
+
+    // ----------------------------------------------------------
+    // 13. MAPS
+    // ----------------------------------------------------------
+
+    if (containsAny(text, [
+      'maps',
+      'map',
+      'मैप',
+      'मैप्स',
+      'गूगल मैप',
+      'गूगल मैप्स',
+    ])) {
+      await openInstalledApp('maps');
+      return;
+    }
+
+    // ----------------------------------------------------------
+    // 14. VOLUME UP
+    // ----------------------------------------------------------
+
     if (containsAny(text, [
       'volume बढ़ाओ',
       'वॉल्यूम बढ़ाओ',
@@ -293,12 +341,16 @@ class _JaaduHomeState extends State<JaaduHome> {
       'sound बढ़ाओ',
       'आवाज तेज करो',
       'आवाज़ तेज करो',
+      'वॉल्यूम तेज करो',
     ])) {
       await callNative('volumeUp');
       return;
     }
 
-    // Volume कम करो
+    // ----------------------------------------------------------
+    // 15. VOLUME DOWN
+    // ----------------------------------------------------------
+
     if (containsAny(text, [
       'volume कम करो',
       'वॉल्यूम कम करो',
@@ -312,7 +364,10 @@ class _JaaduHomeState extends State<JaaduHome> {
       return;
     }
 
-    // Volume mute
+    // ----------------------------------------------------------
+    // 16. MUTE
+    // ----------------------------------------------------------
+
     if (containsAny(text, [
       'volume mute करो',
       'वॉल्यूम म्यूट करो',
@@ -325,7 +380,10 @@ class _JaaduHomeState extends State<JaaduHome> {
       return;
     }
 
-    // Volume full
+    // ----------------------------------------------------------
+    // 17. VOLUME FULL
+    // ----------------------------------------------------------
+
     if (containsAny(text, [
       'volume full करो',
       'वॉल्यूम फुल करो',
@@ -333,12 +391,17 @@ class _JaaduHomeState extends State<JaaduHome> {
       'आवाज़ फुल करो',
       'volume maximum करो',
       'वॉल्यूम maximum करो',
+      'आवाज पूरी करो',
+      'आवाज़ पूरी करो',
     ])) {
       await callNative('volumeMax');
       return;
     }
 
-    // Music Play
+    // ----------------------------------------------------------
+    // 18. MUSIC PLAY
+    // ----------------------------------------------------------
+
     if (containsAny(text, [
       'गाना चलाओ',
       'गाना बजाओ',
@@ -346,12 +409,17 @@ class _JaaduHomeState extends State<JaaduHome> {
       'music बजाओ',
       'play music',
       'play song',
+      'म्यूजिक चलाओ',
+      'म्यूजिक बजाओ',
     ])) {
       await callNative('musicPlay');
       return;
     }
 
-    // Music Pause / Stop
+    // ----------------------------------------------------------
+    // 19. MUSIC PAUSE
+    // ----------------------------------------------------------
+
     if (containsAny(text, [
       'गाना रोक दो',
       'गाना बंद करो',
@@ -360,34 +428,47 @@ class _JaaduHomeState extends State<JaaduHome> {
       'music रोक दो',
       'pause music',
       'stop music',
+      'म्यूजिक रोक दो',
+      'म्यूजिक बंद करो',
     ])) {
       await callNative('musicPause');
       return;
     }
 
-    // अगला गाना
+    // ----------------------------------------------------------
+    // 20. NEXT SONG
+    // ----------------------------------------------------------
+
     if (containsAny(text, [
       'अगला गाना',
+      'अगला song',
       'next song',
       'next music',
-      'अगला song',
+      'अगला म्यूजिक',
     ])) {
       await callNative('musicNext');
       return;
     }
 
-    // पिछला गाना
+    // ----------------------------------------------------------
+    // 21. PREVIOUS SONG
+    // ----------------------------------------------------------
+
     if (containsAny(text, [
       'पिछला गाना',
+      'पिछला song',
       'previous song',
       'previous music',
-      'पिछला song',
+      'पिछला म्यूजिक',
     ])) {
       await callNative('musicPrevious');
       return;
     }
 
-    // Torch ON
+    // ----------------------------------------------------------
+    // 22. TORCH ON
+    // ----------------------------------------------------------
+
     if (containsAny(text, [
       'टॉर्च चालू करो',
       'टॉर्च ऑन करो',
@@ -400,7 +481,10 @@ class _JaaduHomeState extends State<JaaduHome> {
       return;
     }
 
-    // Torch OFF
+    // ----------------------------------------------------------
+    // 23. TORCH OFF
+    // ----------------------------------------------------------
+
     if (containsAny(text, [
       'टॉर्च बंद करो',
       'टॉर्च ऑफ करो',
@@ -413,6 +497,34 @@ class _JaaduHomeState extends State<JaaduHome> {
       return;
     }
 
+    // ==========================================================
+    // 24. DYNAMIC INSTALLED APP FINDER
+    // ==========================================================
+    //
+    // उदाहरण:
+    // "मेरे फोन में Spotify खोलो"
+    // "फोन में Calculator चालू करो"
+    // "मेरे मोबाइल में Files खोलो"
+    // "WhatsApp application खोलो"
+    //
+    // अगर ऊपर वाला कोई specific command match नहीं हुआ,
+    // तो जादू Android से installed launchable apps खोजेगा।
+    // ==========================================================
+
+    final appName = extractAppName(text);
+
+    if (appName.isNotEmpty) {
+      final opened = await openInstalledApp(appName);
+
+      if (opened) {
+        return;
+      }
+    }
+
+    // ----------------------------------------------------------
+    // UNKNOWN COMMAND
+    // ----------------------------------------------------------
+
     if (!mounted) return;
 
     setState(() {
@@ -422,6 +534,76 @@ class _JaaduHomeState extends State<JaaduHome> {
     });
   }
 
+  // ============================================================
+  // EXTRACT POSSIBLE APP NAME
+  // ============================================================
+
+  String extractAppName(String text) {
+    String result = text;
+
+    final removeWords = [
+      'मेरे फोन में',
+      'मेरे मोबाइल में',
+      'फोन में',
+      'मोबाइल में',
+      'मेरे फोन का',
+      'मेरे मोबाइल का',
+      'फोन का',
+      'मोबाइल का',
+      'application',
+      'app',
+      'ऐप',
+      'एप',
+      'खोलो',
+      'खोल',
+      'खोल दो',
+      'चालू करो',
+      'चालू कर दो',
+      'चालू',
+      'ओपन करो',
+      'ओपन कर दो',
+      'open करो',
+      'open कर दो',
+      'open',
+    ];
+
+    for (final word in removeWords) {
+      result = result.replaceAll(word, ' ');
+    }
+
+    return result.replaceAll(RegExp(r'\s+'), ' ').trim();
+  }
+
+  // ============================================================
+  // OPEN INSTALLED APP
+  // ============================================================
+
+  Future<bool> openInstalledApp(String appName) async {
+    try {
+      final result = await nativeChannel.invokeMethod<bool>(
+        'openInstalledApp',
+        {
+          'appName': appName,
+        },
+      );
+
+      return result == true;
+    } on PlatformException catch (e) {
+      if (!mounted) return false;
+
+      setState(() {
+        heardText =
+            'ऐप खोलने में समस्या: ${e.message ?? 'App नहीं मिला'}';
+      });
+
+      return false;
+    }
+  }
+
+  // ============================================================
+  // NATIVE COMMAND
+  // ============================================================
+
   Future<void> callNative(String method) async {
     try {
       await nativeChannel.invokeMethod(method);
@@ -429,24 +611,59 @@ class _JaaduHomeState extends State<JaaduHome> {
       if (!mounted) return;
 
       setState(() {
-        heardText = 'Command चलाने में समस्या: ${e.message}';
+        heardText =
+            'Command चलाने में समस्या: ${e.message}';
       });
     }
   }
 
+  // ============================================================
+  // CONTACT CALL
+  // ============================================================
+
   Future<void> callContact(String name) async {
     try {
-      await nativeChannel.invokeMethod('callContact', {
-        'name': name,
-      });
+      await nativeChannel.invokeMethod(
+        'callContact',
+        {
+          'name': name,
+        },
+      );
     } on PlatformException catch (e) {
       if (!mounted) return;
 
       setState(() {
-        heardText = 'Contact call करने में समस्या: ${e.message}';
+        heardText =
+            'Contact call करने में समस्या: ${e.message}';
       });
     }
   }
+
+  // ============================================================
+  // URL
+  // ============================================================
+
+  Future<void> openUrl(String url) async {
+    try {
+      await nativeChannel.invokeMethod(
+        'openUrl',
+        {
+          'url': url,
+        },
+      );
+    } catch (_) {
+      if (!mounted) return;
+
+      setState(() {
+        heardText =
+            'यह command अभी नहीं खुल पाई।';
+      });
+    }
+  }
+
+  // ============================================================
+  // HELPER
+  // ============================================================
 
   bool containsAny(String text, List<String> words) {
     for (final word in words) {
@@ -458,30 +675,15 @@ class _JaaduHomeState extends State<JaaduHome> {
     return false;
   }
 
-  Future<void> openUrl(String url) async {
-    try {
-      final uri = Uri.parse(url);
-
-      await const MethodChannel(
-        'jaadu/native',
-      ).invokeMethod('openUrl', {
-        'url': url,
-      });
-    } catch (_) {
-      // Fallback intentionally left for the next native update.
-      if (!mounted) return;
-
-      setState(() {
-        heardText = 'यह command अभी नहीं खुल पाई।';
-      });
-    }
-  }
-
   @override
   void dispose() {
     speech.stop();
     super.dispose();
   }
+
+  // ============================================================
+  // UI
+  // ============================================================
 
   @override
   Widget build(BuildContext context) {
@@ -534,7 +736,9 @@ class _JaaduHomeState extends State<JaaduHome> {
             const Spacer(),
 
             GestureDetector(
-              onTap: isListening ? stopListening : startListening,
+              onTap: isListening
+                  ? stopListening
+                  : startListening,
               child: Container(
                 width: 105,
                 height: 105,
@@ -552,7 +756,9 @@ class _JaaduHomeState extends State<JaaduHome> {
                   ],
                 ),
                 child: Icon(
-                  isListening ? Icons.stop : Icons.mic,
+                  isListening
+                      ? Icons.stop
+                      : Icons.mic,
                   size: 48,
                   color: Colors.white,
                 ),
@@ -562,7 +768,9 @@ class _JaaduHomeState extends State<JaaduHome> {
             const SizedBox(height: 25),
 
             Text(
-              isListening ? 'बोलिए...' : 'माइक दबाकर बोलें',
+              isListening
+                  ? 'बोलिए...'
+                  : 'माइक दबाकर बोलें',
               style: const TextStyle(
                 fontSize: 16,
                 color: Colors.white60,
