@@ -181,7 +181,7 @@ class _JaaduHomeState extends State<JaaduHome> {
       'गाने',
       'संगीत',
     ])) {
-      await openUrl('https://music.youtube.com');
+      await openUrl('https://musicplay);
       return;
     }
 
