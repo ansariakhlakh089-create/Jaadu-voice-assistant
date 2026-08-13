@@ -34,6 +34,71 @@ class MainActivity : FlutterActivity() {
 
             when (call.method) {
 
+                "openInstalledApp" -> {
+    try {
+        val appName = call.argument<String>("appName")
+
+        if (appName.isNullOrBlank()) {
+            result.error(
+                "APP_ERROR",
+                "App name नहीं मिला",
+                null
+            )
+            return@setMethodCallHandler
+        }
+
+        val packageManager = packageManager
+
+        val installedApps = packageManager.getInstalledApplications(
+            android.content.pm.PackageManager.GET_META_DATA
+        )
+
+        val matchedApp = installedApps.firstOrNull { appInfo ->
+            val label = packageManager
+                .getApplicationLabel(appInfo)
+                .toString()
+
+            label.equals(appName, ignoreCase = true) ||
+            label.contains(appName, ignoreCase = true)
+        }
+
+        if (matchedApp == null) {
+            result.error(
+                "APP_NOT_FOUND",
+                "App नहीं मिला: $appName",
+                null
+            )
+            return@setMethodCallHandler
+        }
+
+        val launchIntent =
+            packageManager.getLaunchIntentForPackage(
+                matchedApp.packageName
+            )
+
+        if (launchIntent == null) {
+            result.error(
+                "APP_CANNOT_OPEN",
+                "इस app को खोल नहीं सकते",
+                null
+            )
+            return@setMethodCallHandler
+        }
+
+        launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(launchIntent)
+
+        result.success(true)
+
+    } catch (e: Exception) {
+        result.error(
+            "APP_ERROR",
+            e.message,
+            null
+        )
+    }
+                }
+                
                 "openCamera" -> {
                     try {
                         val intent =
