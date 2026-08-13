@@ -116,16 +116,13 @@ class _JaaduHomeState extends State<JaaduHome> {
   }
 
   // ============================================================
-  // MAIN VOICE COMMAND PROCESSOR
+  // COMMAND PROCESSOR
   // ============================================================
 
   Future<void> handleCommand(String command) async {
     final text = command.toLowerCase().trim();
 
-    // ----------------------------------------------------------
-    // 1. CAMERA
-    // ----------------------------------------------------------
-
+    // CAMERA
     if (containsAny(text, [
       'camera',
       'कैमरा',
@@ -136,10 +133,7 @@ class _JaaduHomeState extends State<JaaduHome> {
       return;
     }
 
-    // ----------------------------------------------------------
-    // 2. GALLERY
-    // ----------------------------------------------------------
-
+    // GALLERY
     if (containsAny(text, [
       'gallery',
       'गैलरी',
@@ -153,10 +147,7 @@ class _JaaduHomeState extends State<JaaduHome> {
       return;
     }
 
-    // ----------------------------------------------------------
-    // 3. PHONE / DIALER
-    // ----------------------------------------------------------
-
+    // PHONE
     if (containsAny(text, [
       'dialer',
       'डायलर',
@@ -168,37 +159,7 @@ class _JaaduHomeState extends State<JaaduHome> {
       return;
     }
 
-    // ----------------------------------------------------------
-    // 4. CONTACT CALL
-    // ----------------------------------------------------------
-
-    if (text.contains('को कॉल करो') ||
-        text.contains('को फोन करो') ||
-        text.contains('को कॉल लगाओ') ||
-        text.contains('को फोन लगाओ') ||
-        text.contains('call करो') ||
-        text.contains('call लगाओ')) {
-      String contactName = text;
-
-      contactName = contactName
-          .replaceAll('को कॉल करो', '')
-          .replaceAll('को फोन करो', '')
-          .replaceAll('को कॉल लगाओ', '')
-          .replaceAll('को फोन लगाओ', '')
-          .replaceAll('call करो', '')
-          .replaceAll('call लगाओ', '')
-          .trim();
-
-      if (contactName.isNotEmpty) {
-        await callContact(contactName);
-        return;
-      }
-    }
-
-    // ----------------------------------------------------------
-    // 5. SETTINGS
-    // ----------------------------------------------------------
-
+    // SETTINGS
     if (containsAny(text, [
       'settings',
       'setting',
@@ -210,10 +171,7 @@ class _JaaduHomeState extends State<JaaduHome> {
       return;
     }
 
-    // ----------------------------------------------------------
-    // 6. WIFI
-    // ----------------------------------------------------------
-
+    // WIFI
     if (containsAny(text, [
       'wifi',
       'wi-fi',
@@ -222,117 +180,35 @@ class _JaaduHomeState extends State<JaaduHome> {
       'वाई-फाई',
       'वाईफाई खोलो',
       'wifi खोलो',
-      'wifi चालू करो',
-      'wifi on करो',
     ])) {
       await callNative('openWifi');
       return;
     }
 
-    // ----------------------------------------------------------
-    // 7. BLUETOOTH
-    // ----------------------------------------------------------
-
+    // BLUETOOTH
     if (containsAny(text, [
       'bluetooth',
       'ब्लूटूथ',
       'ब्लूटूथ खोलो',
-      'bluetooth चालू करो',
-      'bluetooth on करो',
+      'bluetooth खोलो',
     ])) {
       await callNative('openBluetooth');
       return;
     }
 
-    // ----------------------------------------------------------
-    // 8. LOCATION
-    // ----------------------------------------------------------
-
+    // LOCATION
     if (containsAny(text, [
       'location',
       'लोकेशन',
       'स्थान',
       'लोकेशन खोलो',
-      'लोकेशन चालू करो',
-      'location on करो',
+      'location खोलो',
     ])) {
       await callNative('openLocation');
       return;
     }
 
-    // ----------------------------------------------------------
-    // 9. YOUTUBE
-    // ----------------------------------------------------------
-
-    if (containsAny(text, [
-      'youtube',
-      'यूट्यूब',
-      'यूट्यूब खोलो',
-    ])) {
-      await openUrl('https://www.youtube.com');
-      return;
-    }
-
-    // ----------------------------------------------------------
-    // 10. INSTAGRAM
-    // ----------------------------------------------------------
-
-    if (containsAny(text, [
-      'instagram',
-      'इंस्टाग्राम',
-      'इंस्टा',
-      'रील',
-    ])) {
-      await openUrl('https://www.instagram.com');
-      return;
-    }
-
-    // ----------------------------------------------------------
-    // 11. WHATSAPP
-    // ----------------------------------------------------------
-
-    if (containsAny(text, [
-      'whatsapp',
-      'व्हाट्सएप',
-      'वाट्सएप',
-    ])) {
-      await openInstalledApp('whatsapp');
-      return;
-    }
-
-    // ----------------------------------------------------------
-    // 12. CHROME
-    // ----------------------------------------------------------
-
-    if (containsAny(text, [
-      'chrome',
-      'क्रोम',
-      'गूगल क्रोम',
-    ])) {
-      await openInstalledApp('chrome');
-      return;
-    }
-
-    // ----------------------------------------------------------
-    // 13. MAPS
-    // ----------------------------------------------------------
-
-    if (containsAny(text, [
-      'maps',
-      'map',
-      'मैप',
-      'मैप्स',
-      'गूगल मैप',
-      'गूगल मैप्स',
-    ])) {
-      await openInstalledApp('maps');
-      return;
-    }
-
-    // ----------------------------------------------------------
-    // 14. VOLUME UP
-    // ----------------------------------------------------------
-
+    // VOLUME UP
     if (containsAny(text, [
       'volume बढ़ाओ',
       'वॉल्यूम बढ़ाओ',
@@ -347,10 +223,7 @@ class _JaaduHomeState extends State<JaaduHome> {
       return;
     }
 
-    // ----------------------------------------------------------
-    // 15. VOLUME DOWN
-    // ----------------------------------------------------------
-
+    // VOLUME DOWN
     if (containsAny(text, [
       'volume कम करो',
       'वॉल्यूम कम करो',
@@ -364,10 +237,7 @@ class _JaaduHomeState extends State<JaaduHome> {
       return;
     }
 
-    // ----------------------------------------------------------
-    // 16. MUTE
-    // ----------------------------------------------------------
-
+    // MUTE
     if (containsAny(text, [
       'volume mute करो',
       'वॉल्यूम म्यूट करो',
@@ -380,10 +250,7 @@ class _JaaduHomeState extends State<JaaduHome> {
       return;
     }
 
-    // ----------------------------------------------------------
-    // 17. VOLUME FULL
-    // ----------------------------------------------------------
-
+    // MAX VOLUME
     if (containsAny(text, [
       'volume full करो',
       'वॉल्यूम फुल करो',
@@ -398,10 +265,7 @@ class _JaaduHomeState extends State<JaaduHome> {
       return;
     }
 
-    // ----------------------------------------------------------
-    // 18. MUSIC PLAY
-    // ----------------------------------------------------------
-
+    // MUSIC PLAY
     if (containsAny(text, [
       'गाना चलाओ',
       'गाना बजाओ',
@@ -416,10 +280,7 @@ class _JaaduHomeState extends State<JaaduHome> {
       return;
     }
 
-    // ----------------------------------------------------------
-    // 19. MUSIC PAUSE
-    // ----------------------------------------------------------
-
+    // MUSIC PAUSE
     if (containsAny(text, [
       'गाना रोक दो',
       'गाना बंद करो',
@@ -435,10 +296,7 @@ class _JaaduHomeState extends State<JaaduHome> {
       return;
     }
 
-    // ----------------------------------------------------------
-    // 20. NEXT SONG
-    // ----------------------------------------------------------
-
+    // NEXT SONG
     if (containsAny(text, [
       'अगला गाना',
       'अगला song',
@@ -450,10 +308,7 @@ class _JaaduHomeState extends State<JaaduHome> {
       return;
     }
 
-    // ----------------------------------------------------------
-    // 21. PREVIOUS SONG
-    // ----------------------------------------------------------
-
+    // PREVIOUS SONG
     if (containsAny(text, [
       'पिछला गाना',
       'पिछला song',
@@ -465,10 +320,7 @@ class _JaaduHomeState extends State<JaaduHome> {
       return;
     }
 
-    // ----------------------------------------------------------
-    // 22. TORCH ON
-    // ----------------------------------------------------------
-
+    // TORCH ON
     if (containsAny(text, [
       'टॉर्च चालू करो',
       'टॉर्च ऑन करो',
@@ -481,10 +333,7 @@ class _JaaduHomeState extends State<JaaduHome> {
       return;
     }
 
-    // ----------------------------------------------------------
-    // 23. TORCH OFF
-    // ----------------------------------------------------------
-
+    // TORCH OFF
     if (containsAny(text, [
       'टॉर्च बंद करो',
       'टॉर्च ऑफ करो',
@@ -497,18 +346,16 @@ class _JaaduHomeState extends State<JaaduHome> {
       return;
     }
 
+    // CONTACT CALL
+    final contactName = extractContactName(text);
+
+    if (contactName.isNotEmpty) {
+      await callContact(contactName);
+      return;
+    }
+
     // ==========================================================
-    // 24. DYNAMIC INSTALLED APP FINDER
-    // ==========================================================
-    //
-    // उदाहरण:
-    // "मेरे फोन में Spotify खोलो"
-    // "फोन में Calculator चालू करो"
-    // "मेरे मोबाइल में Files खोलो"
-    // "WhatsApp application खोलो"
-    //
-    // अगर ऊपर वाला कोई specific command match नहीं हुआ,
-    // तो जादू Android से installed launchable apps खोजेगा।
+    // DYNAMIC APP SEARCH
     // ==========================================================
 
     final appName = extractAppName(text);
@@ -521,21 +368,41 @@ class _JaaduHomeState extends State<JaaduHome> {
       }
     }
 
-    // ----------------------------------------------------------
-    // UNKNOWN COMMAND
-    // ----------------------------------------------------------
-
+    // UNKNOWN
     if (!mounted) return;
 
     setState(() {
       heardText =
           'मैंने सुना:\n"$command"\n\n'
-          'यह command अभी उपलब्ध नहीं है।';
+          'यह command उपलब्ध नहीं है।';
     });
   }
 
   // ============================================================
-  // EXTRACT POSSIBLE APP NAME
+  // CONTACT NAME
+  // ============================================================
+
+  String extractContactName(String text) {
+    final patterns = [
+      'को कॉल करो',
+      'को फोन करो',
+      'को कॉल लगाओ',
+      'को फोन लगाओ',
+      'को call करो',
+      'को call लगाओ',
+    ];
+
+    for (final pattern in patterns) {
+      if (text.contains(pattern)) {
+        return text.replaceFirst(pattern, '').trim();
+      }
+    }
+
+    return '';
+  }
+
+  // ============================================================
+  // APP NAME EXTRACTION
   // ============================================================
 
   String extractAppName(String text) {
@@ -571,11 +438,13 @@ class _JaaduHomeState extends State<JaaduHome> {
       result = result.replaceAll(word, ' ');
     }
 
-    return result.replaceAll(RegExp(r'\s+'), ' ').trim();
+    return result
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim();
   }
 
   // ============================================================
-  // OPEN INSTALLED APP
+  // OPEN ANY INSTALLED APP
   // ============================================================
 
   Future<bool> openInstalledApp(String appName) async {
@@ -593,7 +462,7 @@ class _JaaduHomeState extends State<JaaduHome> {
 
       setState(() {
         heardText =
-            'ऐप खोलने में समस्या: ${e.message ?? 'App नहीं मिला'}';
+            e.message ?? 'ऐप नहीं मिला।';
       });
 
       return false;
@@ -612,7 +481,7 @@ class _JaaduHomeState extends State<JaaduHome> {
 
       setState(() {
         heardText =
-            'Command चलाने में समस्या: ${e.message}';
+            'Command चलाने में समस्या: ${e.message ?? 'Unknown error'}';
       });
     }
   }
@@ -634,29 +503,7 @@ class _JaaduHomeState extends State<JaaduHome> {
 
       setState(() {
         heardText =
-            'Contact call करने में समस्या: ${e.message}';
-      });
-    }
-  }
-
-  // ============================================================
-  // URL
-  // ============================================================
-
-  Future<void> openUrl(String url) async {
-    try {
-      await nativeChannel.invokeMethod(
-        'openUrl',
-        {
-          'url': url,
-        },
-      );
-    } catch (_) {
-      if (!mounted) return;
-
-      setState(() {
-        heardText =
-            'यह command अभी नहीं खुल पाई।';
+            'Contact call करने में समस्या: ${e.message ?? 'Error'}';
       });
     }
   }
