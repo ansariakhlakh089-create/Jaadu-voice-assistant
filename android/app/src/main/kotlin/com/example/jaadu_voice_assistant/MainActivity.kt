@@ -389,8 +389,7 @@ class MainActivity : FlutterActivity() {
 
                         val cameraId = cameraManager.cameraIdList.firstOrNull { id ->
                             cameraManager.getCameraCharacteristics(id)
-                                .get(android.hardware.camera2.CameraCharacteristics.FLASH_INFO_AVAILABLE)
-                                == true
+                                .get(android.hardware.camera2.CameraCharacteristics.FLASH_INFO_AVAILABLE) == true
                         }
 
                         if (cameraId == null) {
@@ -455,3 +454,4 @@ class MainActivity : FlutterActivity() {
         }
     }
 }
+
